@@ -31,6 +31,10 @@ Explanation:
 Note that 'B' and 'b' are treated as two different characters.
 ```
 """
+
+# use the counter from collections to save us some time
+import collections
+
 def frequency_sort(s: str) -> str:
     """
     Inputs:
@@ -39,7 +43,22 @@ def frequency_sort(s: str) -> str:
     str
     """
     # Your code here
-    pass
+    # count up all of the occurrences of each letter
+    # ref: https://docs.python.org/3/library/collections.html#collections.Counter
+    letters_count = collections.Counter(s)
+
+    # create a list to build the string
+    string_build = list() # []
+
+    # iterate over the sorted counts (using the ".most_common()" method) extracting the letter and frequency key value pair
+    for letter, frequency in letters_count.most_common():
+        # letter * frequency
+        # "V" * 5 -> "VVVVV"
+        # append the letter * frequency to the string_build list
+        string_build.append(letter * frequency)
+    
+    # turn the list back in to a string and return it (use a join?)
+    return "".join(string_build)
 
 print(frequency_sort("free"))  # => "eefr"
 print(frequency_sort("dddbbb"))  # => "dddbbb"
