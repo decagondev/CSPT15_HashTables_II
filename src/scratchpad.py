@@ -38,6 +38,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        return len(self.storage)
 
 
     def get_load_factor(self):
@@ -45,7 +46,7 @@ class HashTable:
         Return the load factor for this hash table.
         Implement this.
         """
-        return len(self.storage)
+        return self.item_count / self.capacity
 
 
     def djb2(self, key):
@@ -96,6 +97,13 @@ class HashTable:
             self.storage[index] = new_entry
         
         # TODO: handle resize?
+        # increment the item count
+        self.item_count += 1
+
+        # if the load factor reaches above 70% suring a put operation
+        if self.get_load_factor() > 0.7:
+            # double the size of the storage
+            self.resize(self.capacity * 2)
 
 
     def delete(self, key):
@@ -105,7 +113,28 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        pass
+        index = self.hash_index(key)
+
+        current_entry = self.storage[index]
+        last_entry = None
+
+        while current_entry is not None and current_entry.key != key:
+            last_entry = current_entry
+            current_entry = last_entry.next
+
+        if current_entry is None:
+            print("ERROR: Unable to remove the entry with a key of", key)
+        else:
+            if last_entry is None:
+                self.storage[index] = current_entry.next
+            else:
+                last_entry.next = current_entry.next
+
+        # resizing?
+        self.item_count -= 1
+
+        if self.get_load_factor() < 0.2:
+            self.resize(self.capacity // 2)
 
 
     def get(self, key):
