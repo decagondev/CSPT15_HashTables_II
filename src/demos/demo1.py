@@ -40,3 +40,8 @@ def top_k_frequent(words, k):
     """
     # Your code here
     pass
+
+# testing
+
+print(top_k_frequent(["lambda", "school", "rules", "lambda", "school", "rocks"], 2))  # => ["lambda", "school"]
+print(top_k_frequent(["the", "sky", "is", "cloudy", "the", "the", "the", "cloudy", "is", "is"], 4))  # => ["the", "is", "cloudy", "sky"]

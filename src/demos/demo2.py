@@ -40,3 +40,6 @@ def frequency_sort(s: str) -> str:
     """
     # Your code here
     pass
+
+print(frequency_sort("free"))  # => "eefr"
+print(frequency_sort("dddbbb"))  # => "dddbbb"
