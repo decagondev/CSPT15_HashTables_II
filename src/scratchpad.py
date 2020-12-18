@@ -27,6 +27,7 @@ class HashTable:
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
         self.item_count = 0
+        self.MIN_CAPACITY = 8
 
 
     def get_num_slots(self):
@@ -131,10 +132,19 @@ class HashTable:
                 last_entry.next = current_entry.next
 
         # resizing?
+        # decrement the item count
         self.item_count -= 1
 
+        # if the load factor goes less than 20%
         if self.get_load_factor() < 0.2:
-            self.resize(self.capacity // 2)
+            # check that the capacity is greater than the min capacity
+            if self.capacity > self.MIN_CAPACITY:
+                new_capacity = self.capacity // 2
+                # check if the new capacity is smaller than the min capacity
+                if new_capacity < self.MIN_CAPACITY:
+                    new_capacity = self.MIN_CAPACITY
+            # resize to the new capacity
+            self.resize(new_capacity)
 
 
     def get(self, key):
@@ -144,7 +154,55 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        pass
+        index = self.hash_index(key)
+
+        current_entry = self.storage[index]
+
+        # while the current entry exists
+        while current_entry is not None:
+            # check if the current entry key is the same as the passed in key
+            if current_entry.key == key:
+                # return the current entry value
+                return current_entry.value
+            # traverse to the next entry
+            current_entry = current_entry.next
+        
+        return None
+
+    def resize(self, new_capacity):
+        """
+        Changes the capacity of the hash table and rehashes all of the key / value pairs
+        """
+        # hold a ref to the old storage
+        old_storage = self.storage
+
+        # set the capacity to a new capacity
+        self.capacity = new_capacity
+
+        # create a new storage with the new capacity
+        self.storage = [None] * self.capacity
+
+        # set a current entry to None
+        current_entry = None
+
+        # grab the old item count bacause we will use the put method which will bash the item count
+        old_item_count = self.item_count
+
+        # iterate over each bucket in the old storage
+        for bucket_item in old_storage:
+            # set current item to the bucket
+            current_entry = bucket_item
+            # while the current entry exists
+            while current_entry is not None:
+                # put the current entry key value pair in to the new storage
+                self.put(current_entry.key, current_entry.value)
+                # traverse to the next node in the linked list
+                current_entry = current_entry.next
+
+        # restore the item count to the correct number
+        self.item_count = old_item_count
+
+
 
 
 if __name__ == "__main__":
